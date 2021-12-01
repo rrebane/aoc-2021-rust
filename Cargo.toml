@@ -1,8 +1,8 @@
 [package]
-name = "advent_of_code"
+name = "aoc_2021"
 version = "0.1.0"
-authors = ["Nicky van Urk <info@nickyvanurk.com>"]
-edition = "2018"
+authors = ["Reimo Rebane <rebanerebane@gmail.com>"]
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
