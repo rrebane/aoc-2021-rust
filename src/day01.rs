@@ -11,7 +11,7 @@ use pest::Parser;
 "#]
 struct InputParser;
 
-#[aoc_generator(day01)]
+#[aoc_generator(day1)]
 fn parse_input(input: &str) -> Result<Vec<u32>, ParseIntError> {
     let input_tokens = InputParser::parse(Rule::input, &input).unwrap_or_else(|e| panic!("{}", e));
     input_tokens.map(|token| token_to_number(&token)).collect()
