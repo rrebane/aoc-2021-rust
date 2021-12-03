@@ -1,7 +1,5 @@
 use aoc_runner_derive::{aoc, aoc_generator};
-use std::num::ParseIntError;
 
-use pest::iterators::Pair;
 use pest::Parser;
 
 #[derive(Parser)]
