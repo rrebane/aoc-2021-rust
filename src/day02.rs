@@ -33,7 +33,10 @@ fn parse_input(input: &str) -> Vec<Direction> {
                 let direction_token = inner_tokens.next().unwrap();
                 let distance_token = inner_tokens.next().unwrap();
                 assert_eq!(distance_token.as_rule(), Rule::number);
-                let distance = distance_token.as_str().parse::<isize>().unwrap_or_else(|e| panic!("{}", e));
+                let distance = distance_token
+                    .as_str()
+                    .parse::<isize>()
+                    .unwrap_or_else(|e| panic!("{}", e));
 
                 match direction_token.as_rule() {
                     Rule::up => directions.push(Direction::Up(distance)),
@@ -41,7 +44,7 @@ fn parse_input(input: &str) -> Vec<Direction> {
                     Rule::forward => directions.push(Direction::Forward(distance)),
                     _ => unreachable!(),
                 }
-            },
+            }
             _ => unreachable!(),
         }
     }
@@ -78,7 +81,7 @@ fn part2(input: &[Direction]) -> isize {
             Direction::Forward(distance) => {
                 horizontal += distance;
                 depth += aim * distance;
-            },
+            }
         }
     }
 
