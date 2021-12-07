@@ -22,7 +22,7 @@ enum Direction {
 
 #[aoc_generator(day2)]
 fn parse_input(input: &str) -> Vec<Direction> {
-    let input_tokens = InputParser::parse(Rule::input, &input).unwrap_or_else(|e| panic!("{}", e));
+    let input_tokens = InputParser::parse(Rule::input, input).unwrap_or_else(|e| panic!("{}", e));
 
     let mut directions = vec![];
 

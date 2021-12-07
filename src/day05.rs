@@ -24,7 +24,7 @@ fn token_to_number(token: Pair<Rule>) -> u16 {
 
 #[aoc_generator(day5)]
 fn parse_input(input: &str) -> Vec<Line> {
-    let input_tokens = InputParser::parse(Rule::input, &input).unwrap_or_else(|e| panic!("{}", e));
+    let input_tokens = InputParser::parse(Rule::input, input).unwrap_or_else(|e| panic!("{}", e));
 
     let mut lines = vec![];
 
@@ -66,22 +66,22 @@ fn coord_to_index(x: u16, y: u16, grid_size: usize) -> usize {
 fn draw_line(grid: &mut [u8], line: &Line, grid_size: usize) {
     match line {
         // Horizontal
-        &[x1, y1, x2, y2] if y1 == y2 => {
+        [x1, y1, x2, y2] if y1 == y2 => {
             let min = cmp::min(x1, x2);
             let max = cmp::max(x1, x2);
 
-            for x in min..=max {
-                let index = coord_to_index(x, y1, grid_size);
+            for x in *min..=*max {
+                let index = coord_to_index(x, *y1, grid_size);
                 grid[index] += 1;
             }
         }
         // Vertical
-        &[x1, y1, x2, y2] if x1 == x2 => {
+        [x1, y1, x2, y2] if x1 == x2 => {
             let min = cmp::min(y1, y2);
             let max = cmp::max(y1, y2);
 
-            for y in min..=max {
-                let index = coord_to_index(x1, y, grid_size);
+            for y in *min..=*max {
+                let index = coord_to_index(*x1, y, grid_size);
                 grid[index] += 1;
             }
         }
@@ -113,22 +113,22 @@ fn part1(input: &[Line]) -> usize {
 fn draw_line2(grid: &mut [u8], line: &Line, grid_size: usize) {
     match line {
         // Horizontal
-        &[x1, y1, x2, y2] if y1 == y2 => {
+        [x1, y1, x2, y2] if y1 == y2 => {
             let min = cmp::min(x1, x2);
             let max = cmp::max(x1, x2);
 
-            for x in min..=max {
-                let index = coord_to_index(x, y1, grid_size);
+            for x in *min..=*max {
+                let index = coord_to_index(x, *y1, grid_size);
                 grid[index] += 1;
             }
         }
         // Vertical
-        &[x1, y1, x2, y2] if x1 == x2 => {
+        [x1, y1, x2, y2] if x1 == x2 => {
             let min = cmp::min(y1, y2);
             let max = cmp::max(y1, y2);
 
-            for y in min..=max {
-                let index = coord_to_index(x1, y, grid_size);
+            for y in *min..=*max {
+                let index = coord_to_index(*x1, y, grid_size);
                 grid[index] += 1;
             }
         }

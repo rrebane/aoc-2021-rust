@@ -21,7 +21,7 @@ struct Bingo {
 
 #[aoc_generator(day4)]
 fn parse_input(input: &str) -> Bingo {
-    let input_tokens = InputParser::parse(Rule::input, &input).unwrap_or_else(|e| panic!("{}", e));
+    let input_tokens = InputParser::parse(Rule::input, input).unwrap_or_else(|e| panic!("{}", e));
 
     let mut numbers = vec![];
     let mut boards = vec![];
@@ -43,6 +43,7 @@ fn parse_input(input: &str) -> Bingo {
                 let mut index: usize = 0;
                 let mut board = [0; 25];
 
+                #[allow(clippy::explicit_counter_loop)]
                 for number_token in token.into_inner() {
                     assert_eq!(number_token.as_rule(), Rule::number);
                     board[index] = number_token
@@ -58,10 +59,7 @@ fn parse_input(input: &str) -> Bingo {
         }
     }
 
-    Bingo {
-        numbers: numbers,
-        boards: boards,
-    }
+    Bingo { numbers, boards }
 }
 
 const WINNING_COMBINATIONS: [[usize; 5]; 10] = [

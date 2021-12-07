@@ -21,7 +21,7 @@ fn token_to_number(token: &Pair<Rule>) -> u16 {
 
 #[aoc_generator(day7)]
 fn parse_input(input: &str) -> Vec<u16> {
-    let input_tokens = InputParser::parse(Rule::input, &input).unwrap_or_else(|e| panic!("{}", e));
+    let input_tokens = InputParser::parse(Rule::input, input).unwrap_or_else(|e| panic!("{}", e));
     input_tokens.map(|token| token_to_number(&token)).collect()
 }
 
@@ -55,7 +55,7 @@ fn part1(input: &[u16]) -> usize {
 fn part2(input: &[u16]) -> usize {
     fn nonlinear_cost(a: u16, b: u16) -> usize {
         let steps = (cmp::max(a, b) - cmp::min(a, b)) as usize;
-        (1..=steps).fold(0, |acc, val| acc + val)
+        (1..=steps).sum()
     }
 
     calculate_fuel_cost(input, nonlinear_cost)

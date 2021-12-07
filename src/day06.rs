@@ -20,7 +20,7 @@ fn token_to_number(token: &Pair<Rule>) -> u8 {
 
 #[aoc_generator(day6)]
 fn parse_input(input: &str) -> Vec<u8> {
-    let input_tokens = InputParser::parse(Rule::input, &input).unwrap_or_else(|e| panic!("{}", e));
+    let input_tokens = InputParser::parse(Rule::input, input).unwrap_or_else(|e| panic!("{}", e));
     input_tokens.map(|token| token_to_number(&token)).collect()
 }
 

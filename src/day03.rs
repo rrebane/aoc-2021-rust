@@ -12,7 +12,7 @@ struct InputParser;
 
 #[aoc_generator(day3)]
 fn parse_input(input: &str) -> Vec<u16> {
-    let input_tokens = InputParser::parse(Rule::input, &input).unwrap_or_else(|e| panic!("{}", e));
+    let input_tokens = InputParser::parse(Rule::input, input).unwrap_or_else(|e| panic!("{}", e));
     input_tokens
         .map(|token| u16::from_str_radix(token.as_str(), 2).unwrap_or_else(|e| panic!("{}", e)))
         .collect()
@@ -20,7 +20,7 @@ fn parse_input(input: &str) -> Vec<u16> {
 
 #[aoc(day3, part1)]
 fn part1(input: &[u16]) -> usize {
-    let report_acc: u16 = input.into_iter().fold(0, |acc, report| acc | report);
+    let report_acc: u16 = input.iter().fold(0, |acc, report| acc | report);
     let report_size: usize = 16 - report_acc.leading_zeros() as usize;
 
     let mut frequency = vec![0; report_size];
@@ -36,11 +36,12 @@ fn part1(input: &[u16]) -> usize {
         .map(|count| if count >= (input.len() / 2) { 1 } else { 0 })
         .fold(0, |acc, val| (acc << 1) + val);
 
-    let epsilon_rate: u16 = !gamma_rate & (!(0 as u16) >> (16 - report_size));
+    let epsilon_rate: u16 = !gamma_rate & (!(0_u16) >> (16 - report_size));
 
     gamma_rate as usize * epsilon_rate as usize
 }
 
+#[allow(clippy::ptr_arg)]
 fn common_bit_at(
     values: &Vec<&u16>,
     idx: usize,
@@ -63,12 +64,14 @@ fn common_bit_at(
     }
 }
 
+#[allow(clippy::ptr_arg)]
 fn oxygen_criteria(values: &Vec<&u16>, idx: usize) -> (u16, u16) {
     common_bit_at(values, idx, |bit_count, total_count| {
         bit_count * 2 >= total_count
     })
 }
 
+#[allow(clippy::ptr_arg)]
 fn co2_criteria(values: &Vec<&u16>, idx: usize) -> (u16, u16) {
     common_bit_at(values, idx, |bit_count, total_count| {
         bit_count * 2 < total_count
@@ -96,18 +99,14 @@ fn filter_values(
 
 #[aoc(day3, part2)]
 fn part2(input: &[u16]) -> usize {
-    let report_acc: u16 = input.into_iter().fold(0, |acc, report| acc | report);
+    let report_acc: u16 = input.iter().fold(0, |acc, report| acc | report);
     let report_size: usize = 16 - report_acc.leading_zeros() as usize;
     let oxygen_rate = filter_values(
-        Vec::from_iter(input.into_iter()),
+        Vec::from_iter(input.iter()),
         report_size - 1,
         oxygen_criteria,
     );
-    let co2_rate = filter_values(
-        Vec::from_iter(input.into_iter()),
-        report_size - 1,
-        co2_criteria,
-    );
+    let co2_rate = filter_values(Vec::from_iter(input.iter()), report_size - 1, co2_criteria);
 
     oxygen_rate as usize * co2_rate as usize
 }

@@ -13,7 +13,7 @@ struct InputParser;
 
 #[aoc_generator(day1)]
 fn parse_input(input: &str) -> Result<Vec<u32>, ParseIntError> {
-    let input_tokens = InputParser::parse(Rule::input, &input).unwrap_or_else(|e| panic!("{}", e));
+    let input_tokens = InputParser::parse(Rule::input, input).unwrap_or_else(|e| panic!("{}", e));
     input_tokens.map(|token| token_to_number(&token)).collect()
 }
 
@@ -24,16 +24,15 @@ fn token_to_number(token: &Pair<Rule>) -> Result<u32, ParseIntError> {
 
 #[aoc(day1, part1)]
 fn part1(input: &[u32]) -> usize {
-    let mut prev_number: Option<u32> = None;
+    let mut prev_number_opt: Option<u32> = None;
     let mut increase_count: usize = 0;
 
     for number in input {
-        match prev_number {
-            Some(prev_number) => increase_count += if prev_number < *number { 1 } else { 0 },
-            _ => (),
-        }
+        if let Some(prev_number) = prev_number_opt {
+            increase_count += if prev_number < *number { 1 } else { 0 }
+        };
 
-        prev_number = Some(*number);
+        prev_number_opt = Some(*number);
     }
 
     increase_count
