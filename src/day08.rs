@@ -233,49 +233,63 @@ fn part2(input: &[Entry]) -> usize {
     output
 }
 
-fn generate_solution(sgmts: Vec<&u8>) -> ([u8; 10], [u8; 10]) {
+fn generate_digits(sgmts: Vec<&u8>) -> ([u8; 10], [u8; 10]) {
     #[rustfmt::skip]
     //  aaaaaaaa | bbbbbbbb | cccccccc | dddddddd | eeeeeeee | ffffffff | gggggggg
-    let solution = [
-        sgmts[0] | sgmts[1] | sgmts[2] |            sgmts[4] | sgmts[5] | sgmts[6],
-                              sgmts[2] |                       sgmts[5]           ,
-        sgmts[0] |            sgmts[2] | sgmts[3] | sgmts[4] |            sgmts[6],
-        sgmts[0] |            sgmts[2] | sgmts[3] |            sgmts[5] | sgmts[6],
-                   sgmts[1] | sgmts[2] | sgmts[3] |            sgmts[5]           ,
-        sgmts[0] | sgmts[1] |            sgmts[3] |            sgmts[5] | sgmts[6],
-        sgmts[0] | sgmts[1] |            sgmts[3] | sgmts[4] | sgmts[5] | sgmts[6],
-        sgmts[0] |            sgmts[2] |                       sgmts[5]           ,
-        sgmts[0] | sgmts[1] | sgmts[2] | sgmts[3] | sgmts[4] | sgmts[5] | sgmts[6],
-        sgmts[0] | sgmts[1] | sgmts[2] | sgmts[3] |            sgmts[5] | sgmts[6],
+    let digits = [
+        sgmts[0] | sgmts[1] | sgmts[2] |            sgmts[4] | sgmts[5] | sgmts[6], // 0
+                              sgmts[2] |                       sgmts[5]           , // 1
+        sgmts[0] |            sgmts[2] | sgmts[3] | sgmts[4] |            sgmts[6], // 2
+        sgmts[0] |            sgmts[2] | sgmts[3] |            sgmts[5] | sgmts[6], // 3
+                   sgmts[1] | sgmts[2] | sgmts[3] |            sgmts[5]           , // 4
+        sgmts[0] | sgmts[1] |            sgmts[3] |            sgmts[5] | sgmts[6], // 5
+        sgmts[0] | sgmts[1] |            sgmts[3] | sgmts[4] | sgmts[5] | sgmts[6], // 6
+        sgmts[0] |            sgmts[2] |                       sgmts[5]           , // 7
+        sgmts[0] | sgmts[1] | sgmts[2] | sgmts[3] | sgmts[4] | sgmts[5] | sgmts[6], // 8
+        sgmts[0] | sgmts[1] | sgmts[2] | sgmts[3] |            sgmts[5] | sgmts[6], // 9
     ];
 
-    let mut sorted_solution = solution;
-    sorted_solution.sort();
+    let mut sorted_digits = digits;
+    sorted_digits.sort_unstable();
 
-    (solution, sorted_solution)
+    (digits, sorted_digits)
+}
+
+fn generate_permutations() -> Vec<([u8; 10], [u8; 10])> {
+    let segments: [u8; 7] = [0b1000000, 0b100000, 0b10000, 0b1000, 0b100, 0b10, 0b1];
+
+    let mut permutations = vec![];
+
+    for permutation in segments.iter().permutations(7) {
+        permutations.push(generate_digits(permutation));
+    }
+
+    permutations.sort_unstable_by(|a, b| a.1.cmp(&b.1));
+    permutations
+}
+
+fn search_solution(permutations: &[([u8; 10], [u8; 10])], target: &[u8; 10]) -> [u8; 10] {
+    let target = {
+        let mut sorted_target = *target;
+        sorted_target.sort_unstable();
+        sorted_target
+    };
+
+    let pos = permutations
+        .binary_search_by(|&permutation| permutation.1.cmp(&target))
+        .unwrap();
+
+    permutations[pos].0
 }
 
 #[aoc(day8, part2, permutation)]
 fn part2_permutation(input: &[Entry]) -> usize {
     let mut output: usize = 0;
 
-    let segments: [u8; 7] = [0b1000000, 0b100000, 0b10000, 0b1000, 0b100, 0b10, 0b1];
-
-    let mut permutations = vec![];
-
-    for permutation in segments.iter().permutations(7) {
-        permutations.push(generate_solution(permutation));
-    }
+    let permutations = generate_permutations();
 
     for entry in input {
-        let mut sorted_patterns = entry.patterns;
-        sorted_patterns.sort();
-        let pos = permutations
-            .iter()
-            .position(|&permutation| sorted_patterns == permutation.1)
-            .unwrap();
-        let solution = permutations[pos].0;
-
+        let solution = search_solution(&permutations, &entry.patterns);
         output += solve_output(&solution, &entry.output);
     }
 
