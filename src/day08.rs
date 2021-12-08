@@ -1,5 +1,6 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 
+use itertools::Itertools;
 use pest::iterators::Pair;
 use pest::Parser;
 
@@ -220,12 +221,61 @@ fn solve_output(solution: &[u8; 10], output: &[u8; 4]) -> usize {
     number
 }
 
-#[aoc(day8, part2)]
+#[aoc(day8, part2, naive)]
 fn part2(input: &[Entry]) -> usize {
     let mut output: usize = 0;
 
     for entry in input {
         let solution = solve_digits(&entry.patterns);
+        output += solve_output(&solution, &entry.output);
+    }
+
+    output
+}
+
+fn generate_solution(sgmts: Vec<&u8>) -> ([u8; 10], [u8; 10]) {
+    #[rustfmt::skip]
+    //  aaaaaaaa | bbbbbbbb | cccccccc | dddddddd | eeeeeeee | ffffffff | gggggggg
+    let solution = [
+        sgmts[0] | sgmts[1] | sgmts[2] |            sgmts[4] | sgmts[5] | sgmts[6],
+                              sgmts[2] |                       sgmts[5]           ,
+        sgmts[0] |            sgmts[2] | sgmts[3] | sgmts[4] |            sgmts[6],
+        sgmts[0] |            sgmts[2] | sgmts[3] |            sgmts[5] | sgmts[6],
+                   sgmts[1] | sgmts[2] | sgmts[3] |            sgmts[5]           ,
+        sgmts[0] | sgmts[1] |            sgmts[3] |            sgmts[5] | sgmts[6],
+        sgmts[0] | sgmts[1] |            sgmts[3] | sgmts[4] | sgmts[5] | sgmts[6],
+        sgmts[0] |            sgmts[2] |                       sgmts[5]           ,
+        sgmts[0] | sgmts[1] | sgmts[2] | sgmts[3] | sgmts[4] | sgmts[5] | sgmts[6],
+        sgmts[0] | sgmts[1] | sgmts[2] | sgmts[3] |            sgmts[5] | sgmts[6],
+    ];
+
+    let mut sorted_solution = solution;
+    sorted_solution.sort();
+
+    (solution, sorted_solution)
+}
+
+#[aoc(day8, part2, permutation)]
+fn part2_permutation(input: &[Entry]) -> usize {
+    let mut output: usize = 0;
+
+    let segments: [u8; 7] = [0b1000000, 0b100000, 0b10000, 0b1000, 0b100, 0b10, 0b1];
+
+    let mut permutations = vec![];
+
+    for permutation in segments.iter().permutations(7) {
+        permutations.push(generate_solution(permutation));
+    }
+
+    for entry in input {
+        let mut sorted_patterns = entry.patterns;
+        sorted_patterns.sort();
+        let pos = permutations
+            .iter()
+            .position(|&permutation| sorted_patterns == permutation.1)
+            .unwrap();
+        let solution = permutations[pos].0;
+
         output += solve_output(&solution, &entry.output);
     }
 
@@ -270,5 +320,10 @@ mod tests {
     #[test]
     fn part2_example() {
         assert_eq!(part2(&parse_input(EXAMPLE_INPUT)), 61229);
+    }
+
+    #[test]
+    fn part2_permutation_example() {
+        assert_eq!(part2_permutation(&parse_input(EXAMPLE_INPUT)), 61229);
     }
 }
