@@ -1,7 +1,8 @@
 use aoc_runner_derive::{aoc, aoc_generator};
 
-use pest::iterators::Pair;
 use pest::Parser;
+
+use crate::util;
 
 #[derive(Parser)]
 #[grammar_inline = r#"
@@ -10,14 +11,6 @@ use pest::Parser;
     input = _{ (line ~ NEWLINE?)+  }
 "#]
 struct InputParser;
-
-fn token_to_number(token: Pair<Rule>) -> u8 {
-    assert_eq!(token.as_rule(), Rule::number);
-    token
-        .as_str()
-        .parse::<u8>()
-        .unwrap_or_else(|e| panic!("{}", e))
-}
 
 #[aoc_generator(day9)]
 fn parse_input(input: &str) -> Vec<Vec<u8>> {
@@ -31,7 +24,10 @@ fn parse_input(input: &str) -> Vec<Vec<u8>> {
         let mut row = vec![];
 
         for number_token in token.into_inner() {
-            row.push(token_to_number(number_token));
+            row.push(
+                util::parse::token_to_number(number_token, Rule::number)
+                    .unwrap_or_else(|e| panic!("{}", e)),
+            );
         }
 
         grid.push(row);
