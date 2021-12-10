@@ -19,16 +19,13 @@ fn part1(input: &str) -> usize {
         let mut stack: Vec<char> = vec![];
 
         for c in line.chars() {
-            match c {
-                c if BRACE_MAP.contains_key(&c) => stack.push(c),
-                c => {
-                    if *BRACE_MAP.get(stack.last().unwrap()).unwrap() == c {
-                        stack.pop();
-                    } else {
-                        score += *ERROR_SCORE_MAP.get(&c).unwrap();
-                        break;
-                    }
-                }
+            if BRACE_MAP.contains_key(&c) {
+                stack.push(c);
+            } else if BRACE_MAP.get(stack.last().unwrap()) == Some(&c) {
+                stack.pop();
+            } else {
+                score += *ERROR_SCORE_MAP.get(&c).unwrap();
+                break;
             }
         }
     }
@@ -48,16 +45,13 @@ fn part2(input: &str) -> usize {
         let mut is_corrupted = false;
 
         for c in line.chars() {
-            match c {
-                c if BRACE_MAP.contains_key(&c) => stack.push(c),
-                c => {
-                    if *BRACE_MAP.get(stack.last().unwrap()).unwrap() == c {
-                        stack.pop();
-                    } else {
-                        is_corrupted = true;
-                        break;
-                    }
-                }
+            if BRACE_MAP.contains_key(&c) {
+                stack.push(c);
+            } else if BRACE_MAP.get(stack.last().unwrap()) == Some(&c) {
+                stack.pop();
+            } else {
+                is_corrupted = true;
+                break;
             }
         }
 
