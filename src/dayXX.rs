@@ -16,7 +16,7 @@ fn parse_input(input: &str) -> Vec<u32> {
     let input_tokens = InputParser::parse(Rule::input, input).unwrap_or_else(|e| panic!("{}", e));
     input_tokens
         .map(|token| {
-            util::parse::token_to_number(&token, Rule::number).unwrap_or_else(|e| panic!("{}", e))
+            util::parse::token_to_number(token, Rule::number).unwrap_or_else(|e| panic!("{}", e))
         })
         .collect()
 }
